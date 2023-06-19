@@ -4,6 +4,14 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+    Autor: Joaquin Asbel Alvarado
+    Abstract:
+    This implementation recives a string and hashes it
+    using the algorithm from ejb's hsearch.
+
+*/
+
 typedef struct
 {
     reportable_t parent;
@@ -60,7 +68,7 @@ reportable_t *report(void *data)
 
     d->parent.data = (char *)(malloc(255 * sizeof(char)));
 
-    snprintf(d->parent.data, 255, "Input: \'%s\'    Output: \'%ld\'\n",d->input,d->output);
+    snprintf(d->parent.data, 255, "Input: \'%s\'    Hashed Input: \'%ld\'\n",d->input,d->output);
     d->parent.len = strlen(d->parent.data);
 
     return (reportable_t *)(data);
