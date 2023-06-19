@@ -2,59 +2,57 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct
 {
     reportable_t parent;
 
-    long unsigned int op1;
-    long unsigned int op2;
-    long unsigned int res;
+    char *input;
+    unsigned long int output;
+
 } my_struct_t;
+
 
 void *parse_parameters(void *data)
 {
-    const char *buf = (const char *)(data);
+    char *buf = (char *)(data);
 
     my_struct_t *d = (my_struct_t *)(malloc(sizeof(my_struct_t)));
-
-    if (d)
-    {
-        sscanf(buf, "%ld %ld", &d->op1, &d->op2);
-    }
+    
+    // taking the input as it is
+    d->input = buf;
 
     return (void *)d;
 }
 
+
 void *do_work(void *data)
 {
     my_struct_t *d = (my_struct_t *)(data);
+    
+    // primes for the hashing function to work with
+    const unsigned int PRIME1 = 37;
+	const unsigned int PRIME2 = 1048583;
 
-    long unsigned int _a = d->op1;
-    long unsigned int _b = d->op2;
-    long unsigned int _t = _b;
+    // the variable that will hold the result
+	unsigned long int h = 0;    
+    
+    // the hash operation itself
+    int i = 0;
+	while (i<strlen(d->input)) {
+		h = h * PRIME1 ^ (*d->input++ - ' ');
+        i++;
+	}
+	h %= PRIME2;
 
-    if (_a)
-    {
-        while (_b)
-        {
-            _b = _a % _t;
-            _a = _t;
-            _t = _b;
-        }
-
-        if (d->op1 > d->op2)
-        {
-            d->res = d->op1 / _a * d->op2;
-        }
-        else
-        {
-            d->res = d->op2 / _a * d->op1;
-        }
-    }
+    // saved at the output
+    d->output = h;
 
     return data;
 }
+
+
 
 reportable_t *report(void *data)
 {
@@ -62,7 +60,7 @@ reportable_t *report(void *data)
 
     d->parent.data = (char *)(malloc(255 * sizeof(char)));
 
-    snprintf(d->parent.data, 255, "LCM(%ld,%ld) = %ld\n", d->op1, d->op2, d->res);
+    snprintf(d->parent.data, 255, "Input: \'%s\'    Output: \'%ld\'\n",d->input,d->output);
     d->parent.len = strlen(d->parent.data);
 
     return (reportable_t *)(data);
