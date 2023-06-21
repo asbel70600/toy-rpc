@@ -9,7 +9,6 @@
     Abstract:
     This implementation recives a string and hashes it
     using the algorithm from ejb's hsearch.
-
 */
 
 typedef struct
